@@ -5,7 +5,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 
 Rectangle {
 	id: tileItemView
-	color: appObj.backgroundColor != null && appObj.backgroundColor != "" ? appObj.backgroundColor : Kirigami.Theme.activeBackgroundColor
+	color: appObj.backgroundColor != null && appObj.backgroundColor != "" ? appObj.backgroundColor : Kirigami.Theme.highlightColor
     //color: Kirigami.Theme.activeBackgroundColor
 	property color gradientBottomColor: Qt.darker(appObj.backgroundColor, 2.0)
 

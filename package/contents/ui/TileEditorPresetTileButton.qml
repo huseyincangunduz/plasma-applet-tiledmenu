@@ -33,7 +33,7 @@ Item {
 		hoverEnabled: true
 		acceptedButtons: Qt.LeftButton
 		cursorShape: Qt.ArrowCursor
-
+		
 		onClicked: presetTileButton.select()
 	}
 
@@ -41,7 +41,16 @@ Item {
 		// plasmoid.downloadPath() will create this folder.
 		// ~/Downloads/Plasma/com.github.zren.tiledmenu/
 		// I litters the Downloads folder... which isn't ideal.
-		return plasmoid.downloadPath()
+	
+		const path = "~/.local/share/com.github.metrolinux.baslat10/imgs/";
+		// QDir dir(path);
+    	// if (!dir.exists()) 
+    	// { 
+     	// 	dir.mkpath(".");
+    	// }
+
+		// process.exec("mkdir -p " + pathc);
+		return path;
 
 		// TODO: Download to ~/.local/share since it's hidden.
 		// Note, this folder does not exist! So we need to create it somehow.
@@ -87,6 +96,7 @@ Item {
 		logger.debug('select', source)
 
 		var sourceFilepath = '' + source // cast to string
+
 		var isLocalFilepath = sourceFilepath.indexOf('file://') == 0 || sourceFilepath.indexOf('/') == 0
 		if (isLocalFilepath) {
 			presetTileButton.setTileBackgroundImage(source)
