@@ -48,7 +48,8 @@ GridView {
 		readonly property string section: modelData || ''
 		readonly property bool isRecentApps: section == appsModel.recentAppsSectionKey
 		readonly property var sectionIcon: appsModel.allAppsModel.sectionIcons[section] || null
-
+		font.bold: true
+		font.capitalization: Font.AllUppercase
 		enabled: availableSections.indexOf(section) >= 0
 
 		font.pixelSize: height * 0.6

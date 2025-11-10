@@ -6,6 +6,8 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.plasma.private.kicker as Kicker
 import org.kde.coreaddons as KCoreAddons
+
+import com.github.metrolinux.baslat10.ui.AppsModel
 // import org.kde.kquickcontrolsaddons 2.0 as KQuickControlsAddons
 
 import "lib"

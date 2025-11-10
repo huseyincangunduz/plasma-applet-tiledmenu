@@ -5,7 +5,7 @@ JumpToSectionView {
 	id: jumpToLetterView
 
 	squareView: appsModel.order == "alphabetical"
-
+	
 	onUpdate: {
 		// console.log('jumpToLetterView.update()')
 		var sections = []

@@ -1,10 +1,12 @@
 import QtQuick
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.core 2.0 as PlasmaCore
 
 Rectangle {
 	id: tileItemView
-	color: appObj.backgroundColor
+	color: appObj.backgroundColor != null && appObj.backgroundColor != "" ? appObj.backgroundColor : Kirigami.Theme.activeBackgroundColor
+    //color: Kirigami.Theme.activeBackgroundColor
 	property color gradientBottomColor: Qt.darker(appObj.backgroundColor, 2.0)
 
 	Component {
@@ -17,9 +19,9 @@ Rectangle {
 	gradient: appObj.backgroundGradient ? tileGradient.createObject(tileItemView) : null
 
 	readonly property int tilePadding: 4 * Screen.devicePixelRatio
-	readonly property int smallIconSize: 32 * Screen.devicePixelRatio
-	readonly property int mediumIconSize: 72 * Screen.devicePixelRatio
-	readonly property int largeIconSize: 96 * Screen.devicePixelRatio
+	readonly property int smallIconSize: 24 * Screen.devicePixelRatio
+	readonly property int mediumIconSize: 60 * Screen.devicePixelRatio
+	readonly property int largeIconSize: 84 * Screen.devicePixelRatio
 
 	readonly property int labelAlignment: appObj.isGroup ? config.groupLabelAlignment : config.tileLabelAlignment
 
@@ -94,6 +96,6 @@ Rectangle {
 		width: parent.width
 		renderType: Text.QtRendering // Fix pixelation when scaling. Plasma.Label uses NativeRendering.
 		style: Text.Outline
-		styleColor: appObj.backgroundGradient ? tileItemView.gradientBottomColor : appObj.backgroundColor
+		styleColor: appObj.backgroundGradient ? tileItemView.gradientBottomColor : appObj.backgroundColor 
 	}
 }

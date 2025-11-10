@@ -5,6 +5,7 @@ import org.kde.plasma.components as PlasmaComponents3
 import org.kde.draganddrop as DragAndDrop
 
 AppToolButton {
+
 	id: itemDelegate
 
 	width: ListView.view.width
@@ -20,7 +21,7 @@ AppToolButton {
 	property string launcherUrl: model.favoriteId || model.url
 	property string iconName: model.iconName || ''
 	property alias iconSource: itemIcon.source
-	property int iconSize: model.largeIcon ? listView.iconSize * 2 : listView.iconSize
+	property int iconSize: model.largeIcon ? listView.iconSize * 1.5 : listView.iconSize
 
 	function endsWith(s, substr) {
 		return s.indexOf(substr) == s.length - substr.length
@@ -96,13 +97,11 @@ AppToolButton {
 		anchors.leftMargin: Kirigami.Units.smallSpacing
 		anchors.right: parent.right
 		anchors.rightMargin: Kirigami.Units.smallSpacing
-
 		Item {
 			Layout.fillHeight: true
 			implicitHeight: itemIcon.implicitHeight
 			implicitWidth: itemIcon.implicitWidth
-
-			Kirigami.Icon {
+ 			Kirigami.Icon {
 				id: itemIcon
 				anchors.centerIn: parent
 				implicitHeight: itemDelegate.iconSize
@@ -120,7 +119,6 @@ AppToolButton {
 			Layout.fillWidth: true
 			// Layout.fillHeight: true
 			Layout.alignment: Qt.AlignVCenter
-			spacing: 0
 
 			RowLayout {
 				Layout.fillWidth: true
