@@ -42,7 +42,7 @@ Item {
 		// ~/Downloads/Plasma/com.github.zren.tiledmenu/
 		// I litters the Downloads folder... which isn't ideal.
 	
-		const path = "~/.local/share/com.github.metrolinux.baslat10/imgs/";
+		const path = "~/.local/share/com.github.huseyincangunduz.baslat10/imgs/";
 		// QDir dir(path);
     	// if (!dir.exists()) 
     	// { 

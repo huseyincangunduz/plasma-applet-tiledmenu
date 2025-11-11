@@ -1,5 +1,11 @@
 # Tiled Menu
 
+## SYNOPSIS
+
+This is a custom fork of "Zren/plasma-applet-tiledmenu" with some customisations.
+
+<!--  
+
 https://store.kde.org/p/2142716/
 
 A menu based on Windows 10's Start Menu.
@@ -26,4 +32,4 @@ Read the [theming guide](Theming.md) to develop Desktop/Icon Themes for this wid
 
 ## Translating
 
-See the [package/translate](package/translate) folder for instructions on translating.
+See the [package/translate](package/translate) folder for instructions on translating. -->
