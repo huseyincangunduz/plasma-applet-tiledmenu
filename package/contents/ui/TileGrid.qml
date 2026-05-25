@@ -64,17 +64,21 @@ DropArea {
 	}
 	onDropped: function(drop) {
 		// console.log('onDropped', drop)
-		if (draggedItem) {
+		var hasValidTarget = canDrop && dropHoverX >= 0 && dropHoverY >= 0
+		if (draggedItem && hasValidTarget) {
 			tileGrid.moveTile(draggedItem, dropHoverX, dropHoverY)
 			tileGrid.resetDrag()
 			// event.accept(Qt.MoveAction)
-		} else if (addedItem) {
+		} else if (addedItem && hasValidTarget) {
 			addedItem.x = dropHoverX
 			addedItem.y = dropHoverY
 			tileGrid.tileModel.push(addedItem)
 			tileGrid.tileModelChanged()
 			tileGrid.resetDrag()
+		} else {
+			tileGrid.resetDrag()
 		}
+		drop.accepted = true
 	}
 
 	// Drag and Drop functions

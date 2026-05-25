@@ -66,9 +66,11 @@ Item {
 
 		property int pressX: -1
 		property int pressY: -1
+		property bool suppressClickAfterDrag: false
 		onPressed: function(mouse) {
 			pressX = mouse.x
 			pressY = mouse.y
+			suppressClickAfterDrag = false
 		}
 
 		drag.target: plasmoid.configuration.tilesLocked ? undefined : tileItem
@@ -78,6 +80,10 @@ Item {
 		// but there's no other way of having a clickable drag area.
 		onClicked: function(mouse) {
 			mouse.accepted = true
+			if (suppressClickAfterDrag) {
+				suppressClickAfterDrag = false
+				return
+			}
 			tileGrid.resetDrag()
 			if (mouse.button == Qt.LeftButton) {
 				if (tileEditorView && tileEditorView.tile) {
@@ -102,6 +108,7 @@ Item {
 			// console.log("drag started")
 			// console.log('onDragStarted', JSON.stringify(modelData), index, tileModel.length)
 			tileGrid.startDrag(index)
+			tileMouseArea.suppressClickAfterDrag = true
 			// tileGrid.dropOffsetX = 0
 			// tileGrid.dropOffsetY = 0
 			tileItem.z = 1
@@ -109,10 +116,7 @@ Item {
 		} else {
 			// console.log("drag finished")
 			// console.log('DragArea.onDrop', draggedItem)
-			var dropAction = Drag.drop() // May be IgnoreAction when not dropped on a DropArea.
-			if (dropAction === Qt.IgnoreAction) {
-				Qt.callLater(tileGrid.resetDrag)
-			}
+			Drag.drop()
 			Qt.callLater(tileItem.fixCoordinateBindings)
 			// We need to use callLater to call functions after Drag.drop().
 		}
