@@ -109,9 +109,11 @@ Item {
 		} else {
 			// console.log("drag finished")
 			// console.log('DragArea.onDrop', draggedItem)
-			Qt.callLater(tileGrid.resetDrag)
+			var dropAction = Drag.drop() // May be IgnoreAction when not dropped on a DropArea.
+			if (dropAction === Qt.IgnoreAction) {
+				Qt.callLater(tileGrid.resetDrag)
+			}
 			Qt.callLater(tileItem.fixCoordinateBindings)
-			Drag.drop() // Breaks QML context.
 			// We need to use callLater to call functions after Drag.drop().
 		}
 	}

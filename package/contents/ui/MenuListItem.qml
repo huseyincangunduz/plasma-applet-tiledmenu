@@ -44,6 +44,15 @@ AppToolButton {
 	// https://github.com/KDE/plasma-desktop/blob/master/applets/kicker/plugin/draghelper.cpp
 	property int pressX: -1
 	property int pressY: -1
+	property bool fallbackDragActive: false
+	Drag.active: fallbackDragActive
+	Drag.dragType: Drag.Automatic
+	Drag.proposedAction: Qt.CopyAction
+	Drag.supportedActions: Qt.CopyAction
+	Drag.mimeData: ({
+		"text/uri-list": model.url || model.favoriteId || "",
+		"favoriteId": model.favoriteId || ""
+	})
 	property bool dragEnabled: launcherUrl
 	function initDrag(mouse) {
 		pressX = mouse.x
@@ -58,8 +67,7 @@ AppToolButton {
 		// Note that we fallback from url to favoriteId for "Most Used" apps.
 		var dragIcon = iconInstance
 		if (typeof dragIcon === "string") {
-			// startDrag must use QIcon. See Issue #75.
-			// dragIcon = dragHelper.defaultIcon
+			// Prefer object icon when available, but do not block drag on string-only icons.
 			dragIcon = null
 		}
 		// console.log('startDrag', widget, model.url, "favoriteId", model.favoriteId)
@@ -67,6 +75,10 @@ AppToolButton {
 		// console.log('    dragIcon', dragIcon)
 		if (dragIcon) {
 			dragHelper.startDrag(widget, model.url || model.favoriteId, dragIcon, "favoriteId", model.favoriteId)
+		} else {
+			fallbackDragActive = true
+			Drag.start()
+			fallbackDragActive = false
 		}
 
 		resetDragState()

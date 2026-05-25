@@ -21,10 +21,26 @@ Item {
 		anchors.fill: sidebarMenu
 
 		onDrop: {
-			if (event && event.mimeData && event.mimeData.url) {
-				var url = event.mimeData.url.toString()
-				url = Utils.parseDropUrl(url)
-				appsModel.sidebarModel.addFavorite(url, 0)
+			if (!event) {
+				return
+			}
+
+			var url = ""
+			if (event.mimeData && event.mimeData.url) {
+				url = event.mimeData.url.toString()
+			} else if (event.urls && event.urls.length > 0) {
+				url = "" + event.urls[0]
+			} else if (event.keys && event.keys.indexOf('favoriteId') >= 0) {
+				url = event.getDataAsString('favoriteId')
+			} else if (event.keys && event.keys.indexOf('text/uri-list') >= 0) {
+				var uriList = event.getDataAsString('text/uri-list')
+				if (uriList) {
+					url = uriList.split('\n', 1)[0].trim()
+				}
+			}
+
+			if (url) {
+				appsModel.sidebarModel.addFavorite(Utils.parseDropUrl(url), 0)
 			}
 		}
 	}

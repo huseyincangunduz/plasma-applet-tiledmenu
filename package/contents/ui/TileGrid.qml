@@ -50,19 +50,19 @@ DropArea {
 
 	//--- Drag and Drop events
 	// onContainsDragChanged: console.log('containsDrag', containsDrag)
-	onEntered: {
+	onEntered: function(drag) {
 		// console.log('onEntered', drag)
 		dragTick(drag)
 	}
-	onPositionChanged: {
+	onPositionChanged: function(drag) {
 		// console.log('onPositionChanged', drag)
 		dragTick(drag)
 	}
-	onExited: {
+	onExited: function() {
 		// console.log('onExited')
 		resetDragHover()
 	}
-	onDropped: {
+	onDropped: function(drop) {
 		// console.log('onDropped', drop)
 		if (draggedItem) {
 			tileGrid.moveTile(draggedItem, dropHoverX, dropHoverY)
@@ -173,9 +173,45 @@ DropArea {
 		tileGrid.tileModelChanged()
 	}
 
+	function extractDropUrl(event) {
+		if (!event) {
+			return ""
+		}
+
+		if (event.keys && event.keys.indexOf('favoriteId') >= 0) {
+			var favoriteId = event.getDataAsString('favoriteId')
+			if (favoriteId) {
+				return Utils.parseDropUrl(favoriteId)
+			}
+		}
+
+		if (event.mimeData && event.mimeData.url) {
+			return Utils.parseDropUrl(event.mimeData.url.toString())
+		}
+
+		if (event.urls && event.urls.length > 0) {
+			return Utils.parseDropUrl(("" + event.urls[0]))
+		}
+
+		if (event.keys && event.keys.indexOf('text/uri-list') >= 0) {
+			var uriList = event.getDataAsString('text/uri-list')
+			if (uriList) {
+				var firstLine = uriList.split('\n', 1)[0].trim()
+				if (firstLine) {
+					return Utils.parseDropUrl(firstLine)
+				}
+			}
+		}
+
+		return ""
+	}
+
 	// QQuickDropEvent
 	// https://github.com/qt/qtdeclarative/blob/a4aa8d9ade44d75cb5a1d84bd7c1773fadc73095/src/quick/items/qquickdroparea_p.h#L63
 	function dragTick(event) {
+		if (!event) {
+			return
+		}
 		// console.log('dragTick', event.x, event.y)
 		var dragX = event.x + scrollView.scrollLeft - dropOffsetX
 		var dragY = event.y + scrollView.scrollTop - dropOffsetY
@@ -188,14 +224,10 @@ DropArea {
 
 		if (draggedItem) {
 		} else if (addedItem) {
-		} else if (event && event.hasUrls && event.urls) {
-			if (event.keys && event.keys.indexOf('favoriteId') >= 0) {
-				var url = event.getDataAsString('favoriteId')
-				url = Utils.parseDropUrl(url)
-			} else {
-				var url = event.urls[0]
-				// console.log('new addedItem', event.urls, url)
-				url = Utils.parseDropUrl(url)
+		} else {
+			var url = extractDropUrl(event)
+			if (!url) {
+				return
 			}
 			// console.log('new addedItem')
 			// console.log('\t', 'urls', event.urls)
@@ -212,7 +244,7 @@ DropArea {
 			dropHoverY = modelY
 
 			// Firefox/Chromium url dropped
-			if (event.keys.indexOf('_NETSCAPE_URL')) {
+			if (event.keys && event.keys.indexOf('_NETSCAPE_URL') >= 0) {
 				var netscapeUrl = event.getDataAsString('_NETSCAPE_URL')
 				var tokens = netscapeUrl.split('\n')
 				if (tokens.length >= 2) {
@@ -223,8 +255,6 @@ DropArea {
 					}
 				}
 			}
-		} else {
-			return
 		}
 
 		dropHoverX = Math.max(0, Math.min(modelX, columns - dropWidth))
