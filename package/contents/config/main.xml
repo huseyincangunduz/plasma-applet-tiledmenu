@@ -70,6 +70,10 @@
 		<entry name="tileMargin" type="double">
 			<default>5</default>
 		</entry>
+		<entry name="presetTileCacheDir" type="string">
+			<label>Directory used to cache downloaded preset tile images.</label>
+			<default></default>
+		</entry>
 		<entry name="tilesLocked" type="bool">
 			<default>false</default>
 		</entry>

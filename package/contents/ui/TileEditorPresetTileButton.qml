@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import "lib" as Lib
 
 Item {
 	id: presetTileButton
@@ -7,6 +8,7 @@ Item {
 	Layout.preferredHeight: image.paintedHeight
 
 	visible: source
+	property QtObject xdgUserDir: Lib.XdgUserDir {}
 	property alias source: image.source
 	property string filename: 'temp.jpg'
 	property int w: 0
@@ -38,19 +40,21 @@ Item {
 	}
 
 	function getDownloadDir() {
-		// plasmoid.downloadPath() will create this folder.
-		// ~/Downloads/Plasma/com.github.zren.tiledmenu/
-		// I litters the Downloads folder... which isn't ideal.
-	
-		const path = "imgs/";
-		// QDir dir(path);
-    	// if (!dir.exists()) 
-    	// { 
-     	// 	dir.mkpath(".");
-    	// }
+		// Allow users to override where preset images are cached.
+		var configuredDir = '' + plasmoid.configuration.presetTileCacheDir
+		if (!configuredDir || configuredDir == 'undefined') {
+			var homeDir = '' + xdgUserDir.home
+			if (homeDir.indexOf('file://') == 0) {
+				homeDir = homeDir.substr('file://'.length)
+			}
+			configuredDir = homeDir + '/.cache'
+			plasmoid.configuration.presetTileCacheDir = configuredDir
+		}
 
-		// process.exec("mkdir -p " + pathc);
-		return path;
+		if (configuredDir.indexOf('file://') == 0) {
+			configuredDir = configuredDir.substr('file://'.length)
+		}
+		return configuredDir
 
 		// TODO: Download to ~/.local/share since it's hidden.
 		// Note, this folder does not exist! So we need to create it somehow.
@@ -103,15 +107,28 @@ Item {
 			presetTileButton.resizeTile()
 		} else {
 			var tiledMenuDir = getDownloadDir()
+			if (tiledMenuDir[tiledMenuDir.length - 1] != '/') {
+				tiledMenuDir += '/'
+			}
 			var localFilepath = tiledMenuDir + filename
+			if (localFilepath.indexOf('file://') == 0) {
+				localFilepath = localFilepath.substr('file://'.length)
+			}
+
 			logger.debug('localFilepath', localFilepath)
 
 			// Save tile image to file
 			logger.debug('grabToImage.start')
 			image.grabToImage(function(result){
 				logger.debug('grabToImage.done', result, result.url)
-				result.saveToFile(localFilepath)
-				presetTileButton.setTileBackgroundImage(localFilepath)
+				var saved = result.saveToFile(localFilepath)
+				logger.debug('saveToFile', saved, localFilepath)
+				if (saved) {
+					presetTileButton.setTileBackgroundImage(localFilepath)
+				} else {
+					// Keep using the remote URL if local save fails.
+					presetTileButton.setTileBackgroundImage(source)
+				}
 				presetTileButton.resizeTile()
 			}, image.sourceSize)
 		}

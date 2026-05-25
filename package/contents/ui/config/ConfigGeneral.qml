@@ -163,6 +163,11 @@ LibConfig.FormKCM {
 		minimumValue: 0
 		maximumValue: config.cellBoxUnits/2
 	}
+	LibConfig.TextField {
+		configKey: 'presetTileCacheDir'
+		Kirigami.FormData.label: i18n("Preset Image Cache")
+		placeholderText: i18n("Leave empty for ~/.cache")
+	}
 
 	LibConfig.RadioButtonGroup {
 		id: tilesThemeGroup
