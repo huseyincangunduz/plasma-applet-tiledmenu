@@ -92,7 +92,8 @@ Item {
 
 	//--- Colors
 	readonly property color themeButtonBgColor: {
-		if (PlasmaCore.Theme.themeName == "oxygen") {
+		// PlasmaCore.Theme can be undefined on some runtime combinations.
+		if (PlasmaCore.Theme && PlasmaCore.Theme.themeName == "oxygen") {
 			return "#20FFFFFF"
 		} else {
 			return Kirigami.Theme.backgroundColor

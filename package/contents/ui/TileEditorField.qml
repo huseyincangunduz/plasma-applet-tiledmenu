@@ -8,7 +8,6 @@ TileEditorGroupBox {
 	Layout.fillWidth: true
 	property alias text: textField.text
 	property alias placeholderText: textField.placeholderText
-	property alias enabled: textField.enabled
 	property string key: ''
 	property string checkedKey: ''
 	checkable: checkedKey
@@ -45,6 +44,7 @@ TileEditorGroupBox {
 		PlasmaComponents3.TextField {
 			id: textField
 			Layout.fillWidth: true
+			enabled: tileEditorField.enabled
 			text: key && appObj.tile && appObj.tile[key] ? appObj.tile[key] : ''
 			property bool updateOnChange: false
 			onTextChanged: {
