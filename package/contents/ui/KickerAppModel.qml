@@ -8,7 +8,9 @@ Kicker.SimpleFavoritesModel {
 	id: kickerAppModel
 
 	signal triggerIndex(int index)
-	onTriggerIndex: {
+	// QML used to inject signal parameters directly into this block.
+	// That implicit injection is deprecated, so we declare parameters explicitly.
+	onTriggerIndex: function(index) {
 		var closeRequested = kickerAppModel.trigger(index, "", null)
 		if (closeRequested) {
 			plasmoid.expanded = false
@@ -16,7 +18,8 @@ Kicker.SimpleFavoritesModel {
 	}
 
 	signal triggerIndexAction(int index, string actionId, string actionArgument)
-	onTriggerIndexAction: {
+	// Use formal JS parameters to access signal arguments in a future-proof way.
+	onTriggerIndexAction: function(index, actionId, actionArgument) {
 		var closeRequested = kickerAppModel.trigger(index, actionId, actionArgument)
 		if (closeRequested) {
 			plasmoid.expanded = false

@@ -177,8 +177,8 @@ DropArea {
 	// https://github.com/qt/qtdeclarative/blob/a4aa8d9ade44d75cb5a1d84bd7c1773fadc73095/src/quick/items/qquickdroparea_p.h#L63
 	function dragTick(event) {
 		// console.log('dragTick', event.x, event.y)
-		var dragX = event.x + scrollView.flickableItem.contentX - dropOffsetX
-		var dragY = event.y + scrollView.flickableItem.contentY - dropOffsetY
+		var dragX = event.x + scrollView.scrollLeft - dropOffsetX
+		var dragY = event.y + scrollView.scrollTop - dropOffsetY
 		var modelX = Math.floor(dragX / cellBoxSize)
 		var modelY = Math.floor(dragY / cellBoxSize)
 		var globalPoint = popup.mapFromItem(tileGrid, event.x, event.y)
@@ -391,16 +391,22 @@ DropArea {
 		id: scrollView
 		anchors.fill: parent
 
-		readonly property int scrollTop: flickableItem ? flickableItem.contentY : 0
-		readonly property int scrollHeight: flickableItem ? flickableItem.contentHeight : 0
-		readonly property int scrollTopAtBottom: viewport ? scrollHeight - viewport.height : 0
+		// QQC2 ScrollView API changed across Qt versions.
+		// Some versions expose flickableItem/viewport, others do not.
+		// Using contentItem with explicit guards avoids ReferenceError.
+		readonly property var flick: contentItem
+		readonly property int scrollLeft: (flick && typeof flick.contentX !== "undefined") ? flick.contentX : 0
+		readonly property int scrollTop: (flick && typeof flick.contentY !== "undefined") ? flick.contentY : 0
+		readonly property int scrollHeight: (flick && typeof flick.contentHeight !== "undefined") ? flick.contentHeight : scrollItem.height
+		readonly property int scrollViewportHeight: availableHeight > 0 ? availableHeight : height
+		readonly property int scrollTopAtBottom: Math.max(0, scrollHeight - scrollViewportHeight)
 		readonly property bool scrollAtTop: scrollTop == 0
 		readonly property bool scrollAtBottom: scrollTop >= scrollTopAtBottom
 
 		function scrollBy(deltaY) {
-			if (flickableItem) {
-				// console.log('scrollHeight', scrollTopAtBottom, scrollHeight, viewport.height)
-				flickableItem.contentY = Math.max(0, Math.min(scrollTop + deltaY, scrollTopAtBottom))
+			if (flick && typeof flick.contentY !== "undefined") {
+				// console.log('scrollHeight', scrollTopAtBottom, scrollHeight, scrollViewportHeight)
+				flick.contentY = Math.max(0, Math.min(scrollTop + deltaY, scrollTopAtBottom))
 			}
 		}
 
