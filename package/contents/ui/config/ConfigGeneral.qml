@@ -14,7 +14,8 @@ LibConfig.FormKCM {
 
 	readonly property string plasmaStyleLabelText: {
 		var plasmaStyleText = i18nd("kcm_desktoptheme", "Plasma Style")
-		return plasmaStyleText + ' (' + PlasmaCore.Theme.themeName + ')'
+		var themeName = (PlasmaCore.Theme && PlasmaCore.Theme.themeName) ? PlasmaCore.Theme.themeName : i18n("Unknown")
+		return plasmaStyleText + ' (' + themeName + ')'
 	}
 
 	function isClassName(item, className) {

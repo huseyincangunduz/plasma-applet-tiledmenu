@@ -1,31 +1,16 @@
 // Version 6
 
-import QtQuick 2.0
-import QtQuick.Controls 1.0
-import QtQuick.Controls.Styles 1.0
-import QtQuick.Layouts 1.0
-import org.kde.kirigami 2.0 as Kirigami
+import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 
 ColumnLayout {
 	id: page
 
 	SystemPalette { id: systemPalette }
 
-	Component {
-		id: textFieldStyle
-		TextFieldStyle {
-			textColor: control.activeFocus ? systemPalette.text : systemPalette.text
-
-			background: Rectangle {
-				radius: 2
-				color: control.activeFocus ? systemPalette.base : "transparent"
-				border.color: control.activeFocus ? systemPalette.highlight : "transparent"
-				border.width: 1
-			}
-		}
-	}
-
-	ScrollView {
+	QQC2.ScrollView {
 		Layout.fillWidth: true
 		Layout.fillHeight: true
 
@@ -42,7 +27,7 @@ ColumnLayout {
 
 			Component {
 				id: boolControl
-				CheckBox {
+				QQC2.CheckBox {
 					checked: modelValue
 					text: modelValue
 					onClicked: plasmoid.configuration[modelKey] = !modelValue
@@ -51,22 +36,25 @@ ColumnLayout {
 
 			Component {
 				id: numberControl
-				SpinBox {
-					value: modelValue
+				QQC2.TextField {
+					text: String(modelValue)
 					readonly property bool isInteger: modelConfigType === 'uint' || modelConfigType === 'int' || Number.isInteger(modelValue)
-					decimals: isInteger ? 0 : 3
-					maximumValue: Number.MAX_SAFE_INTEGER
-					Component.onCompleted: {
-						valueChanged.connect(function() {
-							plasmoid.configuration[modelKey] = value
-						})
+					inputMethodHints: Qt.ImhFormattedNumbersOnly
+					validator: isInteger
+						? IntValidator { bottom: -2147483648; top: 2147483647 }
+						: DoubleValidator {}
+					onEditingFinished: {
+						var parsed = isInteger ? parseInt(text, 10) : parseFloat(text)
+						if (!isNaN(parsed)) {
+							plasmoid.configuration[modelKey] = parsed
+						}
 					}
 				}
 			}
 
 			Component {
 				id: stringListControl
-				TextArea {
+				QQC2.TextArea {
 					text: '' + modelValue
 					readOnly: true
 					implicitHeight: contentHeight + font.pixelSize
@@ -76,7 +64,7 @@ ColumnLayout {
 
 			Component {
 				id: stringControl
-				TextArea {
+				QQC2.TextArea {
 					text: modelValue
 					// readOnly: true
 					implicitHeight: contentHeight + font.pixelSize
@@ -91,7 +79,7 @@ ColumnLayout {
 
 			Component {
 				id: base64jsonControl
-				TextArea {
+				QQC2.TextArea {
 					text: {
 						if (modelValue) {
 							var data = JSON.parse(Qt.atob(modelValue))
@@ -115,20 +103,32 @@ ColumnLayout {
 				readonly property var configDefaultValue: plasmoid.configuration[model.key + 'Default']
 				readonly property bool isDefault: valueToString(model.value) == valueToString(model.defaultValue) || valueToString(model.value) == valueToString(configDefaultValue)
 
-				TextField {
+				QQC2.TextField {
 					Layout.alignment: Qt.AlignTop | Qt.AlignLeft
 					// Layout.fillWidth: true
 					text: model.key
 					readOnly: true
-					style: textFieldStyle
+					color: systemPalette.text
+					background: Rectangle {
+						radius: 2
+						color: parent.activeFocus ? systemPalette.base : "transparent"
+						border.color: parent.activeFocus ? systemPalette.highlight : "transparent"
+						border.width: 1
+					}
 					Layout.preferredWidth: 200 * Kirigami.Units.devicePixelRatio
 					font.bold: !isDefault
 				}
-				TextField {
+				QQC2.TextField {
 					Layout.alignment: Qt.AlignTop | Qt.AlignLeft
 					text: model.stringType || model.configType || model.valueType
 					readOnly: true
-					style: textFieldStyle
+					color: systemPalette.text
+					background: Rectangle {
+						radius: 2
+						color: parent.activeFocus ? systemPalette.base : "transparent"
+						border.color: parent.activeFocus ? systemPalette.highlight : "transparent"
+						border.width: 1
+					}
 					Layout.preferredWidth: 80 * Kirigami.Units.devicePixelRatio
 				}
 				Loader {

@@ -1,7 +1,6 @@
 import QtQuick
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core 2.0 as PlasmaCore
 
 Rectangle {
 	id: tileItemView

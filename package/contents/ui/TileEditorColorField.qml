@@ -7,9 +7,6 @@ import QtQuick.Dialogs as QtDialogs
 import QtQuick.Window
 import org.kde.kirigami as Kirigami
 
-// https://doc.qt.io/qt-6/qtgraphicaleffects5-index.html
-import Qt5Compat.GraphicalEffects as QtGraphicalEffects // TODO Deprecated in Qt6
-
 import org.kde.plasma.components as PlasmaComponents3
 
 PlasmaComponents3.TextField {
@@ -93,29 +90,25 @@ PlasmaComponents3.TextField {
 
 		// Color Preview Circle
 		Rectangle {
-			id: previewBgMask
-			visible: false
-			anchors.fill: parent
-			border.width: 1 * Screen.devicePixelRatio
-			border.color: "transparent"
-			radius: width / 2
-		}
-		QtGraphicalEffects.ConicalGradient {
 			id: previewBgGradient
 			visible: colorField.showPreviewBg
 			anchors.fill: parent
-			angle: 0.0
-			gradient: Gradient {
-				GradientStop { position: 0.00; color: "white" }
-				GradientStop { position: 0.24; color: "white" }
-				GradientStop { position: 0.25; color: "#cccccc" }
-				GradientStop { position: 0.49; color: "#cccccc" }
-				GradientStop { position: 0.50; color: "white" }
-				GradientStop { position: 0.74; color: "white" }
-				GradientStop { position: 0.75; color: "#cccccc" }
-				GradientStop { position: 1.00; color: "#cccccc" }
+			radius: width / 2
+			clip: true
+			color: "white"
+
+			Rectangle {
+				width: parent.width / 2
+				height: parent.height / 2
+				x: parent.width / 2
+				color: "#cccccc"
 			}
-			source: previewBgMask
+			Rectangle {
+				width: parent.width / 2
+				height: parent.height / 2
+				y: parent.height / 2
+				color: "#cccccc"
+			}
 		}
 		Rectangle {
 			id: previewFill
