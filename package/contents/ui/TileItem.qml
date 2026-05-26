@@ -103,7 +103,8 @@ Item {
 	// We use this drag pattern to use the internal drag with events.
 	// https://stackoverflow.com/a/24729837/947742
 	readonly property bool dragActive: tileMouseArea.drag.active
-	onDragActiveChanged: function(dragActive) {
+	Drag.onActiveChanged: function(dragActive) {
+		console.debug('tileItem DragActiveChanged', dragActive)
 		if (dragActive) {
 			// console.log("drag started")
 			// console.log('onDragStarted', JSON.stringify(modelData), index, tileModel.length)
@@ -114,11 +115,17 @@ Item {
 			tileItem.z = 1
 			Drag.start()
 		} else {
-			// console.log("drag finished")
-			// console.log('DragArea.onDrop', draggedItem)
-			Drag.drop()
+			console.log("drag finished")
+			if (tileGrid.draggedItem) {
+				var cellX = Math.max(0, Math.min(Math.floor(tileItem.x / cellBoxSize), tileGrid.columns - modelData.w))
+				var cellY = Math.max(0, Math.floor(tileItem.y / cellBoxSize))
+				if (!tileGrid.hits(cellX, cellY, modelData.w, modelData.h)) {
+					console.log('moveTile to', cellX, cellY)
+					tileGrid.moveTile(tileGrid.draggedItem, cellX, cellY)
+				}
+			}
+			tileGrid.resetDrag()
 			Qt.callLater(tileItem.fixCoordinateBindings)
-			// We need to use callLater to call functions after Drag.drop().
 		}
 	}
 

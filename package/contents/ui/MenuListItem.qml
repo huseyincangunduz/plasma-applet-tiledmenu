@@ -22,6 +22,12 @@ AppToolButton {
 	property string iconName: model.iconName || ''
 	property alias iconSource: itemIcon.source
 	property int iconSize: model.largeIcon ? listView.iconSize * 1.5 : listView.iconSize
+	property bool supportsActionList: !!listView.model
+		&& typeof listView.model.hasActionList === "function"
+		&& typeof listView.model.getActionList === "function"
+		&& typeof listView.model.triggerIndexAction === "function"
+	property bool hasContextMenuActions: supportsActionList && listView.model.hasActionList(index)
+	property bool canOpenContextMenu: !!launcherUrl || hasContextMenuActions
 
 	function endsWith(s, substr) {
 		return s.indexOf(substr) == s.length - substr.length
@@ -175,7 +181,7 @@ AppToolButton {
 		logger.debug('MenuListItem.onClicked', mouse.button, Qt.LeftButton, Qt.RightButton)
 		if (mouse.button == Qt.LeftButton) {
 			trigger()
-		} else if (mouse.button == Qt.RightButton) {
+		} else if (mouse.button == Qt.RightButton && canOpenContextMenu) {
 			contextMenu.open(mouse.x, mouse.y)
 		}
 	}
@@ -188,11 +194,12 @@ AppToolButton {
 	// property var actionList: hasActionList ? listView.model.getActionList(index) : []
 	AppContextMenu {
 		id: contextMenu
+		visualParent: itemDelegate
 		onPopulateMenu: function(menu) {
 			if (launcherUrl && !plasmoid.configuration.tilesLocked) {
 				menu.addPinToMenuAction(launcherUrl)
 			}
-			if (listView.model.hasActionList(index)) {
+			if (hasContextMenuActions) {
 				var actionList = listView.model.getActionList(index)
 				menu.addActionList(actionList, listView.model, index)
 			}

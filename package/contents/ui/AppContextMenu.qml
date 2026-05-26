@@ -19,16 +19,14 @@ Item {
 		}
 	}
 
-	onClosed: destroyMenu()
-
 	function open(x, y) {
 		refreshMenu()
 
-		if (menu.content.length === 0) {
+		if (!menu || menu.content.length === 0) {
 			return
 		}
 
-		if (x && y) {
+		if (typeof x === "number" && typeof y === "number") {
 			menu.open(x, y)
 		} else {
 			menu.open()
@@ -37,9 +35,10 @@ Item {
 
 	function destroyMenu() {
 		if (menu) {
-			menu.destroy()
-			// menu = null // Don't null here. Binding loop: onOpended=false => closed() => destroyMenu() => menu=null => opened=false
-			logger.debug('AppContextMenu.destroyMenu', menu)
+			let oldMenu = menu
+			menu = null
+			oldMenu.destroy()
+			logger.debug('AppContextMenu.destroyMenu', oldMenu)
 		}
 	}
 
@@ -54,7 +53,7 @@ Item {
 
 		PlasmaExtras.Menu {
 			id: contextMenu
-			visualParent: root.visualParent
+			visualParent: root.visualParent || root.parent
 
 			function newSeperator() {
 				return Qt.createQmlObject("import org.kde.plasma.extras as PlasmaExtras; PlasmaExtras.MenuItem { separator: true }", contextMenu)

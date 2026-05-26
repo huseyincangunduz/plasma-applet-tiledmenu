@@ -65,10 +65,12 @@ DropArea {
 	onDropped: function(drop) {
 		// console.log('onDropped', drop)
 		var hasValidTarget = canDrop && dropHoverX >= 0 && dropHoverY >= 0
-		if (draggedItem && hasValidTarget) {
-			tileGrid.moveTile(draggedItem, dropHoverX, dropHoverY)
+		if (draggedItem) {
+			// Internal tile moves are handled directly in TileItem.Drag.onActiveChanged
+			addedItem.x = dropHoverX
+			addedItem.y = dropHoverY
+			tileGrid.tileModelChanged()
 			tileGrid.resetDrag()
-			// event.accept(Qt.MoveAction)
 		} else if (addedItem && hasValidTarget) {
 			addedItem.x = dropHoverX
 			addedItem.y = dropHoverY
