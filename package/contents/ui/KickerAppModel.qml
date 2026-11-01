@@ -40,11 +40,19 @@ Kicker.SimpleFavoritesModel {
 	// DisabledRole           Qt.UserRole + 11        @since: Plasma 5.20
 	// IsMultilineTextRole    Qt.UserRole + 12        @since: Plasma 5.24
 	// DisplayWrappedRole     Qt.UserRole + 13        @since: Plasma 6.0
+
+	// Plasma 6.8 prefixes favoriteIds with "applications:", but tile urls are stored without it.
+	function stripAppsScheme(id) {
+		id = String(id)
+		return id.indexOf('applications:') === 0 ? id.substr('applications:'.length) : id
+	}
+
 	function getApp(url) {
+		url = stripAppsScheme(url)
 		for (var i = 0; i < count; i++) {
 			var modelIndex = kickerAppModel.index(i, 0)
 			var favoriteId = kickerAppModel.data(modelIndex, Qt.UserRole + 3)
-			if (favoriteId == url) {
+			if (stripAppsScheme(favoriteId) == url) {
 				var app = {}
 				app.indexInModel = i
 				app.favoriteId = favoriteId
@@ -63,10 +71,11 @@ Kicker.SimpleFavoritesModel {
 		return null
 	}
 	function runApp(url) {
+		url = stripAppsScheme(url)
 		for (var i = 0; i < count; i++) {
 			var modelIndex = kickerAppModel.index(i, 0)
 			var favoriteId = kickerAppModel.data(modelIndex, Qt.UserRole + 3)
-			if (favoriteId == url) {
+			if (stripAppsScheme(favoriteId) == url) {
 				kickerAppModel.triggerIndex(i)
 				return
 			}
