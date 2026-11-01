@@ -26,7 +26,7 @@ Item {
 	Kicker.RunnerModel {
 		id: runnerModel
 
-		appletInterface: plasmoid
+		appletInterface: widget
 		favoritesModel: rootModel.favoritesModel
 		mergeResults: config.searchResultsMerged
 
