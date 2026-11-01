@@ -426,7 +426,7 @@ DropArea {
 	QQC2.ScrollView {
 		id: scrollView
 		anchors.fill: parent
-		contentWidth: scrollItem.width
+		// contentWidth: scrollItem.width
 		contentHeight: scrollItem.height
 		// QQC2 ScrollView API changed across Qt versions.
 		// Some versions expose flickableItem/viewport, others do not.
