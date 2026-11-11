@@ -117,14 +117,16 @@ ListModel {
 	signal itemTriggered()
 
 	function hasActionList(index) {
-		var DescriptionRole = Qt.UserRole + 1
 		var HasActionListRole = Qt.UserRole + 8
 
 		var item = list[index]
+		if (!item || !item.parentModel) {
+			return false
+		}
 		var modelIndex = item.parentModel.index(item.indexInParent, 0)
-		return item.parentModel.data(modelIndex, HasActionListRole)
+		return !!item.parentModel.data(modelIndex, HasActionListRole)
 	}
-
+	
 	function getActionList(index) {
 		var DescriptionRole = Qt.UserRole + 1
 		var ActionListRole = Qt.UserRole + 9
